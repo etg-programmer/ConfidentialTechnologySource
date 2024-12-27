@@ -1,0 +1,44 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Description of what the lane does"
+  lane :custom_lane do
+    # add actions here: https://docs.fastlane.tools/actions
+  end
+
+  lane :test_sdk_project do
+    run_tests(scheme: "ConfidentialTechnology")
+  end
+
+  lane :create_sdk_archive do
+    sh("xcodebuild archive -project ../ConfidentialTechnology.xcodeproj -scheme ConfidentialTechnology -destination 'generic/platform=iOS Simulator' -archivePath 'archives/ConfidentialTechnology-iOS_Simulator' SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES")
+  end
+
+  lane :create_sdk_xcframework do
+    sh("xcodebuild -create-xcframework -archive archives/ConfidentialTechnology-iOS_Simulator.xcarchive -framework ConfidentialTechnology.framework -output xcframeworks/ConfidentialTechnology.xcframework")
+  end
+
+  lane :create_sdk_zip do
+    zip(path: "fastlane/xcframeworks/ConfidentialTechnology.xcframework", output: "ConfidentialTechnology.zip")
+  end
+
+
+  # create zip file
+  # upload to aws
+  # send email
+end
